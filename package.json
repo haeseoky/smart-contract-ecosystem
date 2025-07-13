@@ -1,0 +1,33 @@
+{
+  "name": "init",
+  "version": "1.0.0",
+  "description": "블록체인 연습",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:gas": "REPORT_GAS=true hardhat test",
+    "test:comprehensive": "hardhat test test/ComprehensiveTest.ts",
+    "deploy:local": "hardhat ignition deploy ignition/modules/Lock.ts --network localhost",
+    "node": "hardhat node",
+    "clean": "hardhat clean",
+    "coverage": "hardhat coverage",
+    "setup": "npm install && npm run compile",
+    "security": "ts-node scripts/security-check.ts",
+    "demo": "npx hardhat run scripts/demo-interaction.ts --network localhost",
+    "demo:full": "npx hardhat run scripts/full-ecosystem-demo.ts --network localhost",
+    "interact": "npx hardhat run scripts/interact-lock.ts --network localhost",
+    "advanced": "npx hardhat run scripts/advanced-interaction.ts --network localhost",
+    "showcase": "npx hardhat run scripts/contract-showcase.ts --network localhost"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox-viem": "^4.0.0",
+    "hardhat": "^2.25.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.1.0"
+  }
+}

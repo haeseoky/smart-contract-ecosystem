@@ -1,0 +1,68 @@
+name: 스마트컨트랙트 CI/CD 파이프라인
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: 테스트 및 보안 검증
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: 의존성 설치
+      run: npm ci
+      
+    - name: 컨트랙트 컴파일
+      run: npm run compile
+      
+    - name: 테스트 실행
+      run: npm run test
+      
+    - name: 테스트 커버리지
+      run: npm run coverage
+      
+    - name: 가스 리포트 생성
+      run: npm run test:gas
+      
+    - name: 보안 검증 (Slither)
+      uses: crytic/slither-action@v0.3.0
+      with:
+        node-version: 18
+        
+  deploy-testnet:
+    name: 테스트넷 배포
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/develop'
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: 의존성 설치
+      run: npm ci
+      
+    - name: Sepolia 테스트넷 배포
+      run: npm run deploy:sepolia
+      env:
+        SEPOLIA_URL: ${{ secrets.SEPOLIA_URL }}
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
